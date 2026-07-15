@@ -55,3 +55,21 @@ app.post('/biodata', async (req, res) => {
         res.status(500).json({ error: "Terjadi kesalahan pada server atau database" });
     }
 });
+//put
+app.put('/biodata/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nama, nim, kelas } = req.body;
+        const result = await pool.query(
+            'UPDATE biodata SET nama = $1, nim = $2, kelas = $3 WHERE id = $4 RETURNING *',
+            [nama, nim, kelas, id]
+        );
+        res.status(200).json({
+            message: "Berhasil memperbarui data biodata",
+            data: result.rows[0]
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: "Terjadi kesalahan pada server atau database" });
+    }
+});
